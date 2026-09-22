@@ -1,52 +1,91 @@
 ---- 1b
-/*
-Delete this block comment and place your answer to 1b here.
-*/
+SELECT job, COUNT(job) AS count
+FROM Employee
+GROUP BY job
+ORDER BY job ASC;
 
 
 ---- 1e
-/*
-Delete this block comment and place your answer to 1e here.
-*/
+SELECT deptID 
+FROM Employee
+WHERE job = 'engineer'
+GROUP BY deptID
+HAVING COUNT(*) = (
+    SELECT MAX(count)
+    FROM (
+        SELECT deptID, COUNT(job) AS count
+        FROM Employee
+        WHERE job = 'engineer'
+        GROUP BY deptID
+    ) AS count_engineers
+);
 
 
 ---- 1g
-/*
-Delete this block comment and place your answer to 1g here.
-*/
+SELECT empID, salary
+FROM Employee
+WHERE salary = (
+    SELECT MAX(salary)
+    FROM
+    (
+        SELECT DISTINCT salary
+        FROM Employee
+        WHERE salary NOT IN (
+            SELECT MAX(salary)
+            FROM Employee
+        )
+    ) AS second_highest_salaries
+);
 
 
 ---- 2a
-/*
-Delete this block comment and place your answer to 2a here.
-*/
+SELECT empName, empID
+FROM Employee
+WHERE empID NOT IN (
+    SELECT empID
+    FROM Assigned
+);
 
 
 ---- 2e
-/*
-Delete this block comment and place your answer to 2e here.
-*/
+SELECT a.projID, sum(e.salary) AS total_salary
+FROM Employee e
+LEFT JOIN Assigned a ON e.empID = a.empID
+GROUP BY a.projID;
 
 
 ---- 3a
-/*
-Delete this block comment and place your answer to 3a here.
-*/
-
+UPDATE Employee
+SET salary = salary * 1.10
+WHERE empID IN (
+    SELECT a.empID
+    FROM Assigned a
+    JOIN Project p ON a.projID = p.projID
+    WHERE p.title = 'compiler'
+);
 
 ---- 3b
-/*
-Delete this block comment and place your answer to 3b here.
-*/
+UPDATE Employee e
+JOIN Department d ON e.deptID = d.deptID
+SET e.salary = e.salary * CASE
+    WHEN d.location = 'Waterloo' THEN 1.08
+    WHEN e.job = 'janitor' THEN 1.05
+    ELSE 1.00
+END;
 
 
 ---- 3c
-/*
-Delete this block comment and place your answer to 3c here.
-*/
+ALTER TABLE Employee
+ADD COLUMN shift VARCHAR(5);
 
 
 ---- 3d
-/*
-Delete this block comment and place your answer to 3d here.
-*/
+UPDATE Employee e
+SET shift = CASE
+    WHEN empID NOT IN (
+        SELECT empID
+        FROM Assigned
+    ) THEN 'N.A.'
+    WHEN e.empID % 2 = 0 THEN 'day'
+    ELSE 'night'
+END;

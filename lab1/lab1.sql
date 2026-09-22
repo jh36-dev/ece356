@@ -149,10 +149,11 @@ GROUP BY e.job;
 ---- 2d
 SELECT a.projID, sum(e.salary) AS total_salary
 FROM Employee e
-JOIN assigned a ON e.empID = a.empID
+JOIN Assigned a ON e.empID = a.empID
 GROUP BY a.projID;
 
 ---- 2e
+--- JOIN vs LEFT JOIN
 SELECT a.projID, sum(e.salary) AS total_salary
 FROM Employee e
 LEFT JOIN Assigned a ON e.empID = a.empID
