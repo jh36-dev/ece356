@@ -116,16 +116,47 @@ WHERE salary = (
 
 
 ---- 2a
+SELECT empName, empID
+FROM Employee
+WHERE empID NOT IN (
+    SELECT empID
+    FROM Assigned
+);
 /*
-Delete this block comment and place your answer to 2a here.
+1. Syntax: NOT IN needs parentheses around a real subquery, 
+not a bare table name — WHERE empID NOT IN (SELECT empID 
+FROM Assigned), not NOT IN Assigned.
+
+Output columns: just empName and empID, in that order, 
+matching the names the question asks for. Expect 3 rows 
+on your data: Herr, Morris, Maria.
 */
 
+---- 2b
+SELECT e.empName, e.job, a.role
+FROM Employee e
+JOIN Assigned a ON e.empID = a.empID
+WHERE e.job != a.role;
+
+---- 2c
+SELECT e.job, COUNT(*) AS count
+FROM Employee e
+JOIN Assigned a ON e.empID = a.empID
+WHERE e.job = a.role
+GROUP BY e.job;
+--- can also say count(e.job)
+
+---- 2d
+SELECT a.projID, sum(e.salary) AS total_salary
+FROM Employee e
+JOIN assigned a ON e.empID = a.empID
+GROUP BY a.projID;
 
 ---- 2e
-/*
-Delete this block comment and place your answer to 2e here.
-*/
-
+SELECT a.projID, sum(e.salary) AS total_salary
+FROM Employee e
+LEFT JOIN Assigned a ON e.empID = a.empID
+GROUP BY a.projID;
 
 ---- 3a
 /*
