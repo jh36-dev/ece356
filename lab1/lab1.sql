@@ -158,25 +158,46 @@ FROM Employee e
 LEFT JOIN Assigned a ON e.empID = a.empID
 GROUP BY a.projID;
 
+---- 2f
+SELECT e.empName, e.empID
+FROM Employee e
+JOIN Assigned a ON a.empID = e.empID
+GROUP BY e.empID, e.empName
+HAVING COUNT(*) > 1;
+
 ---- 3a
-/*
-Delete this block comment and place your answer to 3a here.
-*/
+UPDATE Employee
+SET salary = salary * 1.10
+WHERE empID IN (
+    SELECT a.empID
+    FROM Assigned a
+    JOIN Project p ON a.projID = p.projID
+    WHERE p.title = 'compiler'
+);
 
 
 ---- 3b
-/*
-Delete this block comment and place your answer to 3b here.
-*/
+UPDATE Employee e
+JOIN Department d ON e.deptID = d.deptID
+SET e.salary = e.salary * CASE
+    WHEN d.location = 'Waterloo' THEN 1.08
+    WHEN e.job = 'janitor' THEN 1.05
+    ELSE 1.00
+END;
 
 
 ---- 3c
-/*
-Delete this block comment and place your answer to 3c here.
-*/
+ALTER TABLE Employee
+ADD COLUMN shift VARCHAR(5);
 
 
 ---- 3d
-/*
-Delete this block comment and place your answer to 3d here.
-*/
+UPDATE Employee e
+SET shift = CASE
+    WHEN empID NOT IN (
+        SELECT empID
+        FROM Assigned
+    ) THEN 'N.A.'
+    WHEN e.empID % 2 = 0 THEN 'day'
+    ELSE 'night'
+END;
